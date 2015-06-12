@@ -111,4 +111,12 @@ public class Topbar extends RelativeLayout {
     public void setOnTopbarClickListener(TopbarClickListener listener){
         this.mListener = listener;
     }
+
+    public void setLeftVisible(boolean flag){
+        if(flag){
+            leftButton.setVisibility(View.VISIBLE);
+        }else{
+            leftButton.setVisibility(View.GONE);
+        }
+    }
 }

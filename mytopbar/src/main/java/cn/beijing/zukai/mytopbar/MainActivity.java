@@ -28,6 +28,8 @@ public class MainActivity extends ActionBarActivity {
                 Toast.makeText(MainActivity.this,"IMOOC RIGHT",Toast.LENGTH_SHORT).show();
             }
         });
+
+        topbar.setLeftVisible(false);
     }
 
     @Override
