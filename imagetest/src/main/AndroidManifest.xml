@@ -16,6 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".color.PrimaryColor"/>
+        <activity android:name=".color.MatrixColor"/>
+        <activity android:name=".color.PixesEffect"/>
     </application>
 
 </manifest>
