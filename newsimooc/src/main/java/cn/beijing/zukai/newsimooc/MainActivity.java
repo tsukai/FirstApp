@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.beijing.zukai.newsimooc.bean.NewsBean;
-import cn.beijing.zukai.newimooc.adapter.NewsAdapter;
+import cn.beijing.zukai.newsimooc.adapter.NewsAdapter;
 
 
 public class MainActivity extends Activity {
@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(List<NewsBean> newsBeans) {
             super.onPostExecute(newsBeans);
-            NewsAdapter newsAdapter = new NewsAdapter(MainActivity.this, newsBeans);
+            NewsAdapter newsAdapter = new NewsAdapter(MainActivity.this, newsBeans,mListView);
             mListView.setAdapter(newsAdapter);
         }
     }

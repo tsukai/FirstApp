@@ -8,6 +8,7 @@ import android.os.Message;
 import android.util.Log;
 import android.util.LruCache;
 import android.widget.ImageView;
+import android.widget.ListView;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -15,6 +16,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+
+import cn.beijing.zukai.newsimooc.R;
+import cn.beijing.zukai.newsimooc.adapter.NewsAdapter;
 
 /**
  * Created by zukai on 2015/06/12.
@@ -24,8 +30,11 @@ public class ImageLoader {
     private String mUrl;
     //创建cache
     private LruCache<String,Bitmap> mCaches;
-
-    public ImageLoader(){
+    private ListView mListView;
+    private Set<ImageAsyncTask> mTask;
+    public ImageLoader(ListView listView){
+        mListView = listView;
+        mTask = new HashSet<ImageAsyncTask>();
         //获取最大可用内存
         int maxMemory = (int)Runtime.getRuntime().maxMemory();
         int cacheSize = maxMemory / 4;
@@ -100,22 +109,47 @@ public class ImageLoader {
         return null;
     }
 
+    public void loadImages(int start,int end){
+        for (int i = start; i < end; i++) {
+            String url = NewsAdapter.URLS[i];
+            Bitmap bitmap = getBitmapFromCache(url);
+            if(bitmap == null) {
+                ImageAsyncTask task = new ImageAsyncTask(url);
+                task.execute(url);
+                mTask.add(task);
+                //new ImageAsyncTask(mImageView, url).execute(url);
+            }else{
+                ImageView imageView  = (ImageView) mListView.findViewWithTag(url);
+                imageView.setImageBitmap(bitmap);
+            }
+        }
+    }
+
     public void showImageByAsyncTask(ImageView imageView,String url){
        /* mImageView = imageView;
         mUrl = url;*/
         Bitmap bitmap = getBitmapFromCache(url);
         if(bitmap == null) {
-            new ImageAsyncTask(imageView, url).execute(url);
+//            new ImageAsyncTask( url).execute(url);
+            imageView.setImageResource(R.mipmap.ic_launcher);
         }else{
             imageView.setImageBitmap(bitmap);
         }
     }
 
+    public void cancelAllTask() {
+        if(mTask != null) {
+            for(ImageAsyncTask task : mTask){
+                task.cancel(false);
+            }
+        }
+    }
+
     private class ImageAsyncTask extends AsyncTask<String,Void,Bitmap>{
-        private ImageView imageView;
+//        private ImageView imageView;
         private String mUrl;
-        public ImageAsyncTask(ImageView imageView, String url){
-            this.imageView = imageView;
+        public ImageAsyncTask( String url){
+//            this.imageView = (ImageView) mListView.findViewWithTag(url);
             mUrl = url;
         }
         @Override
@@ -131,9 +165,11 @@ public class ImageLoader {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+            ImageView imageView = (ImageView) mListView.findViewWithTag(mUrl);
             if(imageView.getTag().equals(mUrl)) {
                 imageView.setImageBitmap(bitmap);
             }
+            mTask.remove(this);
         }
     }
 }

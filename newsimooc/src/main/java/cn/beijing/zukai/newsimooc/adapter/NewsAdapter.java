@@ -5,8 +5,10 @@ import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -18,16 +20,28 @@ import cn.beijing.zukai.newsimooc.loader.ImageLoader;
 /**
  * Created by zukai on 2015/06/12.
  */
-public class NewsAdapter extends BaseAdapter{
+public class NewsAdapter extends BaseAdapter implements AbsListView.OnScrollListener{
 
     private List<NewsBean> mList;
     private LayoutInflater miInflater;
     private ImageLoader mImageLoader;
+    private int mStart;
+    private int mEnd;
+    private boolean mFirstIn;
 
-    public NewsAdapter(Context context,List<NewsBean> data){
+    public static String[] URLS;
+
+    public NewsAdapter(Context context,List<NewsBean> data,ListView listView){
         mList = data;
         miInflater = LayoutInflater.from(context);
-        mImageLoader = new ImageLoader();
+        mImageLoader = new ImageLoader(listView);
+        URLS = new String[data.size()];
+        for (int i = 0; i < data.size(); i++) {
+            URLS[i] = data.get(i).getNewsIconUrl();
+        }
+        mFirstIn = true;
+        //register listener
+        listView.setOnScrollListener(this);
     }
 
     @Override
@@ -66,6 +80,27 @@ public class NewsAdapter extends BaseAdapter{
         viewHolder.tvTitle.setText(mList.get(position).getNewTitle());
         viewHolder.tvContent.setText(mList.get(position).getNewsContent());
         return convertView;
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if(scrollState == SCROLL_STATE_IDLE){
+            //加载可见项
+            mImageLoader.loadImages(mStart,mEnd);
+        }else{
+            //停止所有的加载任务
+            mImageLoader.cancelAllTask();
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        mStart = firstVisibleItem;
+        mEnd = firstVisibleItem + visibleItemCount;
+        if(mFirstIn && visibleItemCount > 0){
+            mImageLoader.loadImages(mStart,mEnd);
+            mFirstIn = false;
+        }
     }
 
     class ViewHolder{
