@@ -5,9 +5,12 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import cn.beijing.zukai.mytopbar.listener.TopbarClickListener;
 
 /**
  * Created by zukai on 2015/06/12.
@@ -29,15 +32,15 @@ public class Topbar extends RelativeLayout {
     private int titleTextColor;
 
     private LayoutParams leftParams,rightParams,titleParams;
-
+    private TopbarClickListener mListener;
     public Topbar(Context context) {
         super(context);
     }
 
-    public Topbar(Context context, AttributeSet attrs) {
+    public Topbar(final Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray arr = context.obtainStyledAttributes(attrs,R.styleable.TopBar);
-        leftTextColor = arr.getColor(R.styleable.TopBar_leftTextColor,0);
+        leftTextColor = arr.getColor(R.styleable.TopBar_leftTextColor, 0);
         leftBackground = arr.getDrawable(R.styleable.TopBar_leftBackground);
         leftText = arr.getString(R.styleable.TopBar_leftText);
 
@@ -75,11 +78,25 @@ public class Topbar extends RelativeLayout {
         rightParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
         rightParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,TRUE);
         titleParams = new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.MATCH_PARENT);
-        titleParams.addRule(RelativeLayout.CENTER_IN_PARENT,TRUE);
+        titleParams.addRule(RelativeLayout.CENTER_IN_PARENT, TRUE);
 
         addView(leftButton, leftParams);
-        addView(rightButton,rightParams);
-        addView(tvTitle,titleParams);
+        addView(rightButton, rightParams);
+        addView(tvTitle, titleParams);
+
+        leftButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.leftClick();
+            }
+        });
+
+        rightButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.rightClick();
+            }
+        });
 
     }
 
@@ -90,4 +107,8 @@ public class Topbar extends RelativeLayout {
    /* public Topbar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }*/
+
+    public void setOnTopbarClickListener(TopbarClickListener listener){
+        this.mListener = listener;
+    }
 }
