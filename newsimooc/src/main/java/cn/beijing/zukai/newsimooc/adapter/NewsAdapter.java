@@ -1,4 +1,4 @@
-package cn.beijing.zukai.newimooc.adapter;
+package cn.beijing.zukai.newsimooc.adapter;
 
 import android.content.Context;
 import android.text.Layout;
@@ -62,7 +62,7 @@ public class NewsAdapter extends BaseAdapter{
         String url = mList.get(position).getNewsIconUrl();
         viewHolder.ivIcon.setTag(url);
 //        new ImageLoader().showImageByThread(viewHolder.ivIcon,url);
-        mImageLoader.showImageByAsyncTask(viewHolder.ivIcon,url);
+        mImageLoader.showImageByAsyncTask(viewHolder.ivIcon, url);
         viewHolder.tvTitle.setText(mList.get(position).getNewTitle());
         viewHolder.tvContent.setText(mList.get(position).getNewsContent());
         return convertView;
