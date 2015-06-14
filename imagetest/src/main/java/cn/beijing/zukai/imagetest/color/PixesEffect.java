@@ -29,5 +29,7 @@ public class PixesEffect extends Activity{
 //        bm1 = ImageUtil.handleImageNegative(bitmap);
         imageView1.setImageBitmap(bitmap);
         imageView2.setImageBitmap(ImageUtil.handleImageNegative(bitmap));
+        imageView3.setImageBitmap(ImageUtil.handleImagePixesOldPhote(bitmap));
+        imageView4.setImageBitmap(ImageUtil.handleImagePixesRelief(bitmap));
     }
 }
